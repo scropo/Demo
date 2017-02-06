@@ -4978,33 +4978,70 @@ AttriPanel.prototype.init = function()
 AttriPanel.prototype.addAttribute = function(container, labelText){
 	var div = document.createElement('div');
 	div.style.width = '100%';
-	div.style.marginTop = '10px';
+	div.style.height = '30px';
 	
 	var label = document.createElement('label');
-	label.style.textAlign = 'center';
 	label.style.fontSize = '14px';
-	label.style.verticalAlign = 'middle';
-	label.style.marginRight = '10px';
+	label.style.float = 'left';
+	label.style.marginTop = '2px';
+	// label.style.width = '50px';
+	// label.style.overflow = 'hidden';
+	// label.title = labelText;
 	mxUtils.write(label, labelText);
 	div.appendChild(label);
 	
 	var input = document.createElement('input');
 	input.style.width = '150px';
 	input.style.height = '20px';
+	input.style.float = 'right';
+	input.style.marginRight = '10px';
 	div.appendChild(input);
 	
 	container.appendChild(div);
 };
 
+AttriPanel.prototype.addOneAttribute = function(container, attriDiv){
+	var div = this.createPanel();
+	div.style.display = 'none';
+
+	var input = document.createElement('input');
+	input.style.width = '98px';
+	input.style.height = '20px';
+	div.appendChild(input);
+
+	var confirm = mxUtils.button('确定', mxUtils.bind(this, function(evt){
+		if(input.value != ''){
+			this.addAttribute(attriDiv,input.value);
+			input.value = '';
+		}
+		div.style.display = 'none';
+	}));
+	confirm.style.height = '22px';
+	confirm.style.width = '50px';
+	confirm.style.marginLeft = '5px';
+	var cancel = mxUtils.button('取消', mxUtils.bind(this, function(evt){
+		div.style.display = 'none';
+	}));
+	cancel.style.height = '22px';
+	cancel.style.width = '50px';
+	cancel.style.marginLeft = '5px';
+	div.appendChild(confirm);
+	div.appendChild(cancel);
+
+	container.appendChild(div);
+	return div;
+}
+
 AttriPanel.prototype.addBtn = function(container, attriDiv, btnText){
+	var addDiv = this.addOneAttribute(container, attriDiv);
+
 	var div = document.createElement('div');
 	div.style.width = '100%';
 	div.style.marginTop = '10px';
 	div.style.textAlign = 'center';
 	
-	var btn = mxUtils.button(btnText, mxUtils.bind(this, function(evt)
-	{
-		this.addAttribute(attriDiv,'温度');
+	var btn = mxUtils.button(btnText, mxUtils.bind(this, function(evt){
+		addDiv.style.display = '';
 	}));
 	
 	btn.style.height = '22px';
