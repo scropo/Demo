@@ -4963,19 +4963,21 @@ AttriPanel = function(format, editorUi, container)
 
 mxUtils.extend(AttriPanel, BaseFormatPanel);
 
+//属性面板初始化
 AttriPanel.prototype.init = function()
 {
 	var div = this.createPanel();
 	this.container.appendChild(div);
 	
-	this.addAttribute(div,'长度');
-	this.addAttribute(div,'宽度');
-	this.addAttribute(div,'高度');
-	this.addAttribute(div,'温度');
+	this.addAttribute(div,'atr1', '温度');
+	this.addAttribute(div,'atr2', '长度');
+	this.addAttribute(div,'atr3', '宽度');
+	this.addAttribute(div,'atr4', '高度');
 	this.addBtn(this.container, div, '添加属性');
 };
 
-AttriPanel.prototype.addAttribute = function(container, labelText){
+//属性行
+AttriPanel.prototype.addAttribute = function(container, labelId, labelText){
 	var div = document.createElement('div');
 	div.style.width = '100%';
 	div.style.height = '30px';
@@ -4983,23 +4985,36 @@ AttriPanel.prototype.addAttribute = function(container, labelText){
 	var label = document.createElement('label');
 	label.style.fontSize = '14px';
 	label.style.float = 'left';
-	label.style.marginTop = '2px';
-	// label.style.width = '50px';
-	// label.style.overflow = 'hidden';
-	// label.title = labelText;
-	mxUtils.write(label, labelText);
-	div.appendChild(label);
+	label.style.marginTop = '4px';
+	mxUtils.write(label, labelId);
+	div.appendChild(label);   //属性ID
+
+	var img = document.createElement('img');
+	img.setAttribute('src', Dialog.prototype.closeImage);
+	img.setAttribute('title', '删除');
+	img.style.cursor = 'pointer';
+	img.style.marginTop = '5px';
+	img.style.border = '1px solid transparent';
+	img.style.padding = '1px';
+	img.style.float = 'right';
+	div.appendChild(img);
 	
 	var input = document.createElement('input');
-	input.style.width = '150px';
+	input.style.width = '85px';
 	input.style.height = '20px';
 	input.style.float = 'right';
-	input.style.marginRight = '10px';
-	div.appendChild(input);
+	input.style.marginRight = '5px';
+	div.appendChild(input);   //属性值
+
+	var input2 = input.cloneNode(false);
+	input2.style.width = '60px';
+	input2.value = labelText;
+	div.appendChild(input2);   //属性名
 	
 	container.appendChild(div);
 };
 
+//新增属性行
 AttriPanel.prototype.addOneAttribute = function(container, attriDiv){
 	var div = this.createPanel();
 	div.style.display = 'none';
@@ -5009,10 +5024,12 @@ AttriPanel.prototype.addOneAttribute = function(container, attriDiv){
 	input.style.height = '20px';
 	div.appendChild(input);
 
+	var attriNum = 5; //属性编号
 	var confirm = mxUtils.button('确定', mxUtils.bind(this, function(evt){
 		if(input.value != ''){
-			this.addAttribute(attriDiv,input.value);
+			this.addAttribute(attriDiv,'atr' + attriNum, input.value);
 			input.value = '';
+			attriNum++;
 		}
 		div.style.display = 'none';
 	}));
@@ -5032,6 +5049,7 @@ AttriPanel.prototype.addOneAttribute = function(container, attriDiv){
 	return div;
 }
 
+//新增按钮
 AttriPanel.prototype.addBtn = function(container, attriDiv, btnText){
 	var addDiv = this.addOneAttribute(container, attriDiv);
 
