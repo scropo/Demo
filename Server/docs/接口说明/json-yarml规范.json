@@ -1,0 +1,47 @@
+{
+    "mxGraphModel": {//头节点
+        "$": {//$ 节点属性(样式属性/固有属性(attr.*)/自定义属性(prop.*))
+            "dx": "1110",
+            "dy": "152",
+            "background": "#ffffff"
+        },
+        "root": [//名为root的二级节点 数组
+            {//第一个二级节点root
+                "mxCell": [//多个同名子节点 数组
+                    {//第一个名为mxCell的子节点
+                        "$": {//属性
+                            "id": "0"
+                        }
+                    },
+                    {//第二个名为mxCell的子节点
+                        "$": {
+                            "id": "1",
+                            "parent": "0"
+                        }
+                    },
+                    {//第三个名为mxCell的子节点
+                        "$": {
+                            "id": "4",
+                            "value": "",
+                            "style": "group",
+                            "vertex": "1",
+                            "connectable": "0",
+                            "parent": "1"
+                        },
+                        "mxGeometry": [//子节点
+                            {
+                                "$": {
+                                    "x": "70",
+                                    "y": "60",
+                                    "width": "230",
+                                    "height": "710",
+                                    "as": "geometry"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

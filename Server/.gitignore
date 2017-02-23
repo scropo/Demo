@@ -1,0 +1,7 @@
+#git(分布式版本控制系统)忽略清单
+node_modules*
+bower_components*
+*.log
+docs/ui.js 
+.idea
+.project

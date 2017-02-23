@@ -1,0 +1,31 @@
+[ //arango collections
+    //model(模型集合)
+    {
+        "_key": "", //唯一标识
+        "_id": "",
+        "_rev": "", //版本
+        "filename": "",
+        "xml": {} //model 数据+property 数据(json)
+    },
+    //view(视图看板集合)
+    {
+        "_key": "",
+        "_id": "",
+        "_rev": "",
+        "filename": "",
+        "xml": {} //model 数据+property 数据(json)
+    },
+    //attrs(公共属性信息列表)
+    {
+        "_key": "",
+        "_id": "",
+        "_rev": "",
+        "name": "typeid",
+        "dvalue": "001",
+        "label": "类别ID"
+    },
+    //modelClass(模型类别)
+    {
+        "classID":"name"
+    }
+]
