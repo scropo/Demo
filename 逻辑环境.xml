@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<topology>
+        <properties>
+	    <property name="id"></property>                    //如果是新增时，不需要id，如果是导入已有环境或者修改时，则需要id
+	    <property name="name">HUTAF_SDV</property>                  //名称，必填, 唯一
+            <property name="description"></property> 
+            <property name="pbi"></property> 
+            <property name="createtime"></property> 
+            <property name="creater"></property> 
+            <property name="type"></property> 
+            <property name="share"></property> 
+            <property name="iscbb"></property> 
+        </properties>
+     <!--逻辑单元列表用devices标签标明-->
+    <devices>    
+      <device>   
+        <!--固有属性-->
+        <properties> 
+		    <property name="id"></property>                    //如果是新增时，不需要id，如果是导入已有设备或者修改时，则需要id
+		    <property name="name">Server_01</property>                  //设备名称，必填
+		    <property name="roles"></property>                 //设备种类: 组网设计中；系统根据role(设备类型)分类显示ResourceType, 
+                                                                    //在设计工具中ResourceType和Lcm中的ResourceType保持统一定义,针对自行开发设计工具的用户开放资源类型接口
+		    <property name="number"></property>    //需要多少个此类设备
+		    <property name="description"></property>       //描述	
+
+	    </properties>
+        <devices>
+            <device></device>
+            <device></device>
+        </devices>
+	    <!--端口-->
+	    <ports>                                           
+	        <port>
+		        <properties>
+			        <property name="id"></property>                //如果是新增不需要，如果是导入或者修改数据则需要Id
+			        <property name="name">E1_001</property>        //端口名称
+			        <property name="description"></property>       //描述			       
+			        <property name="portTypeName"></property>      //所属端口类型名称
+			        <property name="description"></property>         //需要多少个此类设备
+			</properties>        
+	        </port>  
+	    </ports>
+	    
+      </device>   
+    </devices>
+    <links>
+    	<link>
+			<property name="id"></property>
+			<property name="name">Link-Radio4</property>
+			<property name="sourceDevice">8a2150dd24747ed8012476e0b72c038c</property>
+			<property name="targetDevice">8a2150dd24747ed8012476f1dd8f0474</property>
+			<property name="sourcePortId">8a2150dd24747ed8012476e0b72c038c</property>
+			<property name="targetPortId">8a2150dd24747ed8012476f1dd8f0474</property>
+			<property name="vlan">vlanid</property>  //网络中要求的vlan配置,　此处可以在增加其他有关网络属性的定义，用于映射和搭建
+	</link>
+    </links>
+    //约束条件由动态映射模块解析, 当前列举的格式是针对IT类组网的，不同产品可以定义不同的约束格式---开放相应的映射插件
+    <limits> 
+        <limit type="">HUTAF_SDV.Server_01[x].type =2285  & Server_01[x].cup > =4 & Server_01[x].memory = 2</limit>
+        <limit type="">HUTAF_SDV.IP=12700.0.1</limit>
+        //linits可以涵盖所有类型的约束以及要求，包含某个节点要安装什么软件、进行什么样的配置，也可以是资源、零散物理的要求和指定
+        <limit type="other">IP资源的要求</limit>  
+    </limits>
+   
+
+    //安装、卸载环境需要执行的脚本, IT,CT 环境初始化、部署需要执行的脚步，脚本可以放在LCM系统中的资源库，也可以是其它地方，部署程序可访问即可
+    <scripts>  
+        <script type="install">ftp://124.25.23/instal/install3.bat</script>
+        //测试初始数据通过外部脚本完成,该部分内容应该有测试用例完成而非组网设计\搭建, 
+        //组网设计->指导搭建->满足测试需求:主要完成网络结构的的定义、设备间的连通、被测对象的部署, 其它(设置被测对象、初始网络数据)处理应由测试执行（用例）完成
+        <script type="init">测试数据初始化, 建议初始化放在测试用例中</script>
+        <script type="config">配置环境脚本</script>
+        <script type="uninstall">\\124.25.23\\instal\\install3.bat</script>
+        <script type="clear">清理测试数据</script>
+    </scripts>
+
+    //支持LCBB\子网
+    <topologys>
+        <topology>子网/LCBB</topology>
+    </topologys>
+
+</topology>
