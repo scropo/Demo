@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+    <properties>
+      <!--固有属性(LCM中对象结构属性)-->
+      <property name="id"></property>                    //数据库id
+      <property name="name"></property>                  //名称
+      <property name="parentId"></property>              //所属环境ID
+      <property name="department"></property>            //部门
+      <property name="labsId"></property>                //实验室数据库ID,多个,隔开
+      <property name="groupId"></property>               //所属分组Id
+      <property name="version"></property>               //环境版本
+      <property name="status"></property>                //环境运行状态
+      <property name="shared"></property>                //共享属性
+      <property name="upgradeStatus"></property>         //环境升级状态
+      <property name="isDynamic"></property>             //动态、静态划分
+      <property name="networkStatus"></property>         //网络配置状态
+      <property name="category"></property>              //分类：手自一体 自动 手工
+      <property name="location"></property>              //环境位置信息
+      <property name="createtime"></property>            //创建时间
+      <property name="description"></property>           //描述
+      
+      <!-- 环境参数属性(扩展属性、用户自定义属性)-->
+      <property name="controNode"></property>
+      <property name="trip"></property>
+
+    </properties>
+
+    <!--环境关联的Topology-->
+    <topologys>
+       <topology>
+          <properties>
+            <property name="id"></property> 
+            <property name="name"></property>
+         <properties>
+       </topology>
+    </topologys>
+
+    <!--环境类型-->
+    <environmenttype>
+          <properties>
+            <property name="id"></property> 
+            <property name="name"></property>
+         <properties>
+    </environmenttype>
+
+    <!-- 环境分组-->
+    <environmentgroup>
+          <properties>
+            <property name="id"></property> 
+            <property name="name"></property>
+         <properties>
+    </environmentgroup>
+
+    <!--环境所在实验室信息, 环境跨实验室时这里有多个-->
+    <labs>
+      <lab>
+          <properties>
+            <property name="id"></property> 
+            <property name="name"></property>
+         <properties>
+     </lab>
+    </labs>
+
+    <!--环境下的设备，可以含交换机-->
+    <devices>    
+     <device>   
+           <properties>                      
+		<!--固有属性-->
+		<property name="id"></property>                    //数据库id
+		<property name="tag"></property>                  //设备名称
+		<property name="name">Server_01</property>         //设备名称
+		<property name="labId"></property>                 //实验室Id	    
+		<property name="typeid"></property>                //所属类型的id
+		<property name="assettag"></property>              //资产编号
+		<property name="version"></property>               //版本
+		<property name="shared"></property>                //是否可共用
+		<property name="contact"></property>               //责任人
+		<property name="status"></property>                //1：占用；0：空闲 2 故障
+		<property name="description"></property>           //描述
+		<property name="enable"></property>                //是否可用	
+		<property name="workspaceId"></property>           //工作台id
+		<property name="department"></property>            //部门
+
+		<!-- 设备参数属性， 设备所属类别、类型中定义的属性，用户自定义属性-->
+		<property name="cpu"></property>
+		<property name="memory"></property>
+
+	    </properties>
+	    
+	    <!--设备类型-->
+	    <devicetype>
+                    <properties>		    
+	    	       <property name="id"></property>                //数据库id
+		       <property name="name"></property>              //类型名称
+		       <property name="category"></property>          //所属分类
+                    </properties> 
+	    </devicetype>	
+
+	    <!--端口-->
+	    <ports>                                           
+	        <port>
+		          <properties>
+			        <property name="id"></property>                //数据库Id
+			        <property name="name"></property>              //端口名称
+			        <property name="description"></property>       //描述
+			        <property name="portTypeId"></property>        //端口类型id
+			        <property name="source"></property>            //端口资源
+			        <property name="shared"></property>            //是否可共用
+			        <property name="enable"></property>            //是否可用
+			        <property name="status"></property>            //端口运行状态：1：在用；0：空闲
+
+                                <!-- 设备参数属性， 设备所属类别、类型中定义的属性，用户自定义属性-->
+				<property name="流量"></property>
+				<property name=""></property>
+			    </properties>
+
+			    <!--端口类型-->
+			    <porttype>
+                                  <properties>	    
+			    	    <property name="id"></property>                //数据库id
+				    <property name="name"></property>              //类型名：E1/GE
+                                  </properties>  
+			    </porttype>	
+
+			    <!--端口所在VLAN,多个-->
+                            <vlans>
+                                <vlan>  		
+                                 <properties>        
+                                   <property name="id"></property>
+			           <property name="vlanId"></property>
+			           <property name="description"></property>
+                                 </properties>
+                                </vlan>
+                           </vlans>   
+	        </port>  
+	    </ports>
+
+            <!-- 子设备 -->
+	    <devices>
+               <device>结构父亲设备节点</device>
+            </devices>
+
+      </device>
+    </devices>
+    
+    <!-- 环境中的连线设备含设备和交换机的连线(Linkto)  -->
+    <links>
+    	<link>	
+             <properties> 
+		<property name="id"></property>
+		<property name="name">Link-Radio4</property>
+		<property name="sourceDevice"></property>
+		<property name="targetDevice"></property>
+		<property name="sourcePortId"></property>
+		<property name="targetPortId"></property>
+             </properties>
+
+	     <!--环境中连线实际要经过的线路(交换机连线)-->
+	     <links>
+		   <link>结构同上层link</link>
+	     </links>
+	</link>
+    </links>
+    
+    <!--LCBB\环境嵌套\测试床下的环境块-->
+    <environments>
+        <environment>结构同上层节点</environment>
+    <environments>
+
+</environment>
+
