@@ -1,0 +1,487 @@
+产品名称Product name
+密级Confidentiality level
+HUTAF LCM	秘密
+产品版本Product version	Total 79pages 共76页
+
+V3R9	
+
+
+HUTAF LCM 实验室环境模型定义
+
+
+
+Prepared by 
+拟制	杨大楼	Date
+日期	2014-10-27
+Reviewed by 
+评审		Date
+日期	
+Approved by
+批准		Date
+日期	
+
+ 
+
+Huawei Technologies Co., Ltd. 
+华为技术有限公司
+All rights reserved
+版权所有  侵权必究
+
+（TST05T01 V2.0/ IPD-PTM / for internal use only）
+（TST05T01 V2.0/ IPD-PTM / 仅供内部使用） 
+
+修订记录
+日期	修订版本	CR号	修改章节	修改描述	作者
+2014-10-27	1.0			初稿编写	00143885
+2014-10-29	1.1			调整文章结构，补充如何建模部分的说明	00143885
+					
+					
+ 
+目录
+修订记录	1
+目录	2
+1	注意	3
+2	简介	3
+3	环境模型概述	3
+3.1	Property	4
+3.2	Node	4
+3.3	Relationship	4
+4	环境建模	4
+4.1	环境模板	5
+4.2	NodeType	5
+4.3	RelationshipType	5
+4.4	Interface	6
+4.5	PropertyTemplate	6
+4.6	NodeTemplate	6
+4.7	RelationshipTemplate	7
+4.8	环境建模示例	7
+5	逻辑环境	9
+5.1	基础设施层建模	10
+5.2	环境业务层建模	12
+5.3	逻辑环境	13
+5.4	基于建模动态映射	14
+5.5	环境切换	14
+6	参考	14
+ 
+1	注意
+本文描述的环境模型仅限于产品测试领域，生产环境的定义和描述目前不涉及。
+
+2	简介
+// 背景 文章主旨 
+3	环境模型概述
+本文针对环境中的元素进行建模，最终输出各个元素的定义以及环境建模的示例；首先我们从物理层看环境中包含了设备、网络、测试仪器、执行器、连接设备的光纤等，从业务层看环境中有是很多个可以独立运行的业务逻辑单元，比如一个HTTP服务，一个工厂测试服务或者是一个小区（无线测试场景）；为了建模，我们将这些不同维度的元素进行分类、分层建模，
+从整体上看，任何环境我们首先看到的是环境中的设备、业务单元以及他们直接的连接关系、依赖关系等，故我们将一个环境模型定位为：环境是由一组节点以及节点直接的关系组成的一个网状结构体。
+为了更进一步细化节点的定义，我们将环境中的设备、网元、业务服务等进行类型化，即抽象出节点类型，有了类型我们就能准确的认识环境中的每个设备（无论是物理设备还是业务逻辑单元或这是一个服务进程）。类型定义要明确参数属性、组成结构、接口服务，有了这些定义我们就可以对类型的实例进行描绘、控制（通过接口服务）
+
+同样更进一步写好关系的定义，我们也对关系进行类型化。
+
+以XML格式对环境模型进行一个简要描述，如下：
+Environment： 表示一套环境，环境具体组成由下面不同的节点组合表达
+Node: 表示环境中被测设备、辅测设备或业务服务，例如一个路由器、测试仪器、执行器或一部终端设备。
+Relationship: 表示Node之间的关系，例如设备直接链接关系、业务服务之间的依赖关系，或业务和设备之间的部署关系。
+一个环境由一个或多个Node组成，Node之间存在着某种关系, 环境可以嵌套，首先用XML简要描述一个环境如下：
+<Environment>
+	<Property name="" value=""/>
+	<Nodes>
+		<Node name="" type="" />//根据硬件资源虚拟出来的，并不存在的？待分析
+	</Nodes>
+	<Relationships> 		
+		<Relationship name="" type="">
+			<Source name=""/>
+			<Source name=""/>
+			<Target name=""/> 
+	</Relationships>
+	<Environment/>
+</Environment>
+
+3.1	Property
+属性：用于描述环境或环境中对象的参数信息，比如描述环境的名称信息、设备的IP信息等, 在环境模型定义中，属性元素可以出现在任意一个对象下。
+3.2	Node
+Node: 描述环境中的网元、设备、测试仪、业务组件；
+      Node 可以嵌套Property描述设备参数信息
+      Node可以嵌套Node，表示一种组成关系，例如路由器由多个框、板、卡、端口组成，嵌套关系可用于表达此类组成关系；对应环境而言Node 是具体独立型和不可分割想，即使Node可以是多个Node的组成。 
+      Node可以具有多个接口操作，接口操作定义在NodeType中
+3.3	Relationship
+Relationship:描述环境中Node之间的关系，这里的关系包含物理上的链接关系和逻辑上的依赖关系
+          关系具有：单向 双向 无向 性，具体根性需要表示的关系类型而定。
+          关系具有：源&目标Node。
+          关系具有：可以具有多个接口操作，接口操作定义在RalationshipType中
+
+以上即环境的一个概要建模。
+4	环境建模
+有了上一节环境的概要介绍，接下来我们要对环境中的元素进行详细的定义，我们最终希望能给出一套完整的定义，用这些定义可以创建出环境中各个元素的模型， 最后基于模型得到环境的实例；
+
+本文目前仅以文字和XML格式表达一个模型的定义，后面会逐步完善模型严谨性、一致性的表达，.
+
+我们用模板来表达一个结构的定义，即描述一个结构应该具备哪些元素。
+4.1	环境模板
+环境模板包括：PropertyTemplate、NodeTemplate、RelationshipTemp，模板是对环境模型的一个结构定义，可以理解为是一个类的定义，通过类的定义，用户（领域专家或开发人员）可以创建出类（模型），最后根据类（模型）实例化出对象。前面章节所述的环境XML是一个实例化后的环境描述。
+
+出了上面几个模板是我们要确定的外，前面章节还提到类型的改进，所有这里还要对节点类型、关系类型进行定义。
+
+4.2	NodeType
+NodeType:  name(名称)  icon(显示图片)  property[](一组属性)  interfaces[](一组操作)
+XML示例：
+<NodeType name="类型名" icon="展示图标URL" extends="ParentNodeType">
+<Properties"/>
+<Interfaces/>
+</NodeType>
+
+类型是环境中设备、业务单元的分类抽象：
+Name:名称，全局唯一，是一类设备、逻辑业务的描述。
+Icon:类型图标URL, 在图形化展示过程可用来界定界面显示的图像
+Properties:属性集，描述改类型具备的属性信息，不同类型属性信息不同，这也是不同类型的区别所在
+Interface:接口服务，该类型的服务操作，为了能控制环境中的设备，我们在类型上对所有的操作服务进行定义。
+NodeType支持继承，通过extends 表达。
+4.3	RelationshipType
+RelationshipType：name(名称) aspect（单向 双向 无向）源Node 目标 Node  Interface[](一组操作)
+XML示例：
+<RelationshipType name="Link/DBConnection" aspect="">
+			<Source name=""/>
+			<Source name=""/>
+			<Target name=""/>
+<Interfaces/>
+</RelationshipType>
+
+RelationshipType  Source Target直接科颜氏1:1 1:n m:n 关系
+
+4.4	Interface
+接口服务：定义了一组用于环境控制的服务，其中有些是必须提供的，有些是用户可选，具体如下
+Interface:name(名称) url(远程服务地址) Operation[](一组动作)
+XML示例：
+<Interface name="ProvisioningService" url="/Node/Provisioning">
+  <Operation name="initNetConfig" required="yes">//环境网络配置初始化
+  <Operation name="install" required="yes">//部署版本
+  <Operation name="initConfig" required="yes">//初始化配置
+  <Operation name="clearConfig" required="yes">//清理初始化配置
+  <Operation name="uninstall" required="yes">//卸载版本
+  <Operation name="clearNetConfig" required="yes">//环境网络配置清理
+  <Operation name="restart" required="no">//重启动作，可选
+    <Inputs>
+      <Input name="ip" propertyname="模型中属性名"/>
+      <Input name="versionPath" propertyname="模型中属性名" />
+    </Inputs>
+    <Outputs>
+     <Output name="result" />
+    </Outputs>
+  </Operation>
+</Interface>
+
+说明：
+当前为了简化定义和使用,Interface默认Input是Node对象的Url,接口需要的参数通过Url中获取，不需要再 input中详细指定参数。
+接口也可以定义需要的详细参数，以精确得到需要的参数数据。
+
+必选接口：是环境搭建业务需要用到的，必选实现和提供
+可选接口：用户自定义业务流、或后续扩展业务中可以使用。
+4.5	PropertyTemplate
+PropertyTemplate：属性模板用于描述对象的参数，可以出现在其他模板中。
+XML:
+<Property name="" type="数据类型" value="" options="取值范围"/>
+
+4.6	NodeTemplate
+Node模板定义Node的结构，表达复杂Node的组成关系可以用嵌套结构。
+NodeTemplate：id（唯一标识）、name（名称）、alias（别名对应逻辑环境中的Node名）、type(NodeType)、property[]、Node[]（嵌套）
+XML示例：
+< NodeTemplate id="001" name="LCMServer1" type="Server">
+<Properties></Properties>
+<Node/>
+</NodeTemplate>
+
+环境中一个Node是一个不可分割的整体，虽然Node是有多个子Node 组成，对应一个确定的环境来说最上层的Node代表的是一个整体。
+
+4.7	RelationshipTemplate
+RelationshipTemplate：id（唯一标识）、name(名称)、type(RelationshipType)、Sourc[]、Target[]
+Relationship： 可以是1:1 、1:n 、m:n多种关系的一种
+ XML示例：
+<RelationshipTemplate id="l1" name="R1TOR2" type="LogicLink/PhysicalLink">			<Source name=""/>
+	<Source name=""/>
+	<Target name=""/>
+</RelationshipTemplate>
+注：上述示例表示多个源Node连接到一个目标Node, 反之亦然。
+
+4.8	环境建模示例
+环境XML示例：首先我们实验室中的设备、网元进行类型建模，定义出设备操作的接口定义，如下:
+
+接口服务的定义：
+<Interface name="ProvisioningService" url="http://lcm.huawei.com/node/provisioning">
+  <Operation name="initNetConfig" required="yes">//环境网络配置初始化
+  <Operation name="install" required="yes">//部署版本
+  <Operation name="initConfig" required="yes">//初始化配置
+  <Operation name="clearConfig" required="yes">//清理初始化配置
+  <Operation name="uninstall" required="yes">//卸载版本
+  <Operation name="clearNetConfig" required="yes">//环境网络配置清理
+</Interface>
+
+NodeType: 交换机OSN6800：
+<NodeType name="OSN6800" icon="http://lcm.huawei.com/model/imge/server.png">
+<Properties>
+        <Property name="ip" type="string" value=""/>
+<Property name="user" type="string" value="huawei" />
+<Property name="pasd" type="string" value="huawei" />
+<Property name="neid" type="string" value="huawei" />
+<Property name="vlanid" type="string" value="huawei" />
+</Properties>
+<Interfaces>
+<Interface ref=" ProvisioningService " />
+</Interfaces>
+</NodeType>
+
+路由器NE40E:
+<NodeType name="NE40E" icon="http://lcm.huawei.com/model/imge/ne40e.png">
+<Properties>
+        <Property name="ip" type="string" value=""/>
+<Property name="user" type="string" value="huawei" />
+<Property name="pasd" type="string" value="huawei" />
+<Property name="vlanid" type="string" value="huawei" />
+</Properties>
+<Interfaces>
+<Interface ref=" ProvisioningService " />
+</Interfaces>
+</NodeType>
+
+端口E1:
+<NodeType name="E1" icon="http://lcm.huawei.com/model/imge/e1.png">
+<Properties>
+        <Property name="name" type="string" value=""/>
+</Properties>
+</NodeType>
+
+根据模型我们描述一个实际物理环境(两个路由器的2个端口通过交换机互联，交换机端口间可以进行数据传送)如下：
+ <Environment id="1" name="2DEV_0LINK">
+	<Node id="1_1" name="NE1" type="NE40E" alias="NE40E1"> 
+		<Properties>
+			<Protery id="1_1_0" name="ip" alias="ip" value="10.78.12.23"/>
+		</Properties>
+		<Node id="1_1_1" name="1/1/0" type="E1" alias="port1"/>
+		<Node id="1_1_2" name="1/1/1" type="E1" alias="port2"/>
+	</Node>
+	<Node id="1_2" name="NE2" type="NE40E" alias="NE40E2"> 
+		<Properties>
+			<Protery id="1_2_0" name="ip" alias="ip" value="10.78.12.24"/>
+		</Properties>
+		<Node id="1_2_1" name="1/1/0" type="E1" alias="port1"/>
+		<Node id="1_2_2" name="1/1/0" type="E1" alias="port2"/>
+	</Node>
+	<Node id="1_3" name="OSN68001" type="OSN6800" alias="ONS68001"> 
+		<Properties>
+			<Protery id="1_3_0" name="ip" alias="ip" value="10.78.12.25"/>
+		</Properties>
+		<Node id="1_3_1" name="1/1/0" type="E1" alias="port1"/>
+		<Node id="1_3_2" name="1/1/0" type="E1" alias="port2"/>
+	</Node>
+
+	<Relationships>
+	<Relationship id="l1" name="NE1_NE2" type="LogicLink">
+		<Source="1_1_1"/>
+		<Target="1_2_1"/>
+		<Relationship id="l11" name="NE1_SW" type="PhysicalLink">
+			<Source="1_1_1"/>
+			<Target="1_3_1"/>
+		</ Relationship>
+		<Relationship id=" l12" name=" SW_SW " type="PhysicalLink">
+			<Source="1_3_1"/>
+			<Target="1_3_2"/>
+		</ Relationship>
+		<Relationship id=" l13" name=" SW_ NE2" type="PhysicalLink">
+			<Source="1_3_2"/>
+			<Target="1_2_1"/>
+		</ Relationship>
+	</Relationship>
+	</Relationships>
+</Environment>
+
+以上是一个物理环境新的通过模型的一个表达，这里没有体现类型接口服务的应用，后面逻辑环境章节将用到服务接口。
+5	逻辑环境
+前面章节重点对环境中各个元素的模型定义，本节将重点讲解如何基于以上的概念和定义对实验室环境进行描述，即逻辑环境的建模。
+
+逻辑环境包括：环境基础设施层、业务层、约束、部署策略四个部分：
+
+	基础设施即我们进入实验室所看到的设备、电源、交互机、网络等包括设备间的网络链路关系。
+	业务层主要指基础设施之上的业务逻辑，比如运行于设备内的服务、小区等逻辑，一个业务逻辑可能运行于一个物理设备上，也可能运行于多个物理设备上，在建模时需要考虑粒度的划分
+	约束都要基于Node Relationship 的定义，例如可以对Node的属性、结构、关系进行约束，约束是逻辑环境到物理环境实例化的过程中资源实例映射的依据。
+	部署策略则是整个环境部署初始化的要求
+
+5.1	基础设施层建模
+基础设施层即我们进入实验室所看到的环境中的设备、测试仪、交互机、设备间链路等物理上可见的部分，为了表述方便，我们将这些可见的对象统称为部件，即可以这样理解：环境中由多种多样的部件以及部件间的链路关系共同构成；
+
+假设有了各种部件的模型，我们就能通过一张图或一个结构化文字表达实验室中任意一个环境，无论其是复杂还是简单都可以表达出来，这就是我们建模的目的。
+
+基础设施建模可以人为是站在物理层角度对环境中的元素进行模型化，以下分部件类型、部件关系类型、部件、部件关系四个维度说明。
+
+NodeType:
+
+同一种部件具有类似的属性、结构、显示图片，例如手机都具有显示屏、电池、手机卡槽、操作系统等特性，同样他们都有呼叫和接听功能。参考前面章节NodeType的定义，我们对手机定义一种类型(NodeType):
+
+<NodeType  name="PHONE"  icon="http://lcm.huawei.com/model/imge/phone.png">
+<Properties>
+        <Property name="factory" value=""/>
+<Property name="model" value=" " />
+<Property name="os" value=" " />
+<Property name="屏幕大小" value=" " />
+</Properties>
+<Interfaces>
+<Interface ref="ProvisioningService" />
+</Interfaces>
+</NodeType>
+
+部件类型建模主要抽取部件共有的属性信息和特征描述，存在相似部件的不同分类，我们可以采用继承关键字表达，即类型可以继承。比如我们定义两个类型智能手机、普通手机都继承自手机类型
+
+RelationshipType:
+
+从物理层看基础设置中部件之间的关系就只有：直连链路； 有时需要更精确的了解一条链路，那么可以根据传说介质或其他维度进行分类如光信号链路等。
+
+Node:
+
+部件对应前面模型定义中的Node；这里需要说明对 Node的建模粒度还不能给出明确的定义，观察者视角不同，Node的模型不尽相同。比如同一个物理上的设备，若他作为一个辅助测试设备，那么对测试来说模型中只有体现他的类型属性即可，不必关系他的内部组成，那么着Node 的模型就只是一个NodeType 实例，若测试关系环境中这个设备的内部结构，不同结构可能表达的含义不同，那么就要对该部件的内部结构建模，通过嵌套关系详细描述Node 的结构组成。
+
+例如一个交换机：若我们用于辅助测试，那么只需要描述出他的账号、密码、端口即可，他的框板卡结构不需要关注，建模：
+
+模型1：
+	<Node id="1_3" name="OSN68001" type="OSN6800" alias="ONS68001"> 
+		<Properties>
+			<Protery id="1_3_0" name="ip" alias="ip" value="10.78.12.25"/>
+			<Protery id="1_3_1" name="ip" alias="username" value="huawei"/>
+		</Properties>
+		<Node id="1_3_1" name="1/1/0" type="E1" alias="port1"/>
+		<Node id="1_3_2" name="1/1/1" type="E1" alias="port2"/>
+		<Node id="1_3_3" name="1/1/2" type="E1" alias="port3"/>
+	</Node>
+
+模型2：
+	<Node id="1_3" name="OSN68001" type="OSN6800" alias="ONS68001"> 
+		<Properties>
+			<Protery id="1_3_0" name="ip" alias="ip" value="10.78.12.25"/>
+			<Protery id="1_3_1" name="ip" alias="username" value="huawei"/>
+		</Properties>	
+		<Node id="1_4" name="OSN_Borad1" type="Borad" alias="board1"> 
+			<Node id="1_4_1" name="1/1/0" type="E1" alias="port1"/>
+			<Node id="1_4_2" name="1/1/1" type="E1" alias="port2"/>
+			<Node id="1_4_3" name="1/1/2" type="E1" alias="port3"/>\\
+		</Node>
+		<Node id="1_5" name="OSN_Borad2" type="Borad" alias="board2"> 
+			<Node id="1_5_1" name="1/1/0" type="E1" alias="port1"/>
+			<Node id="1_5_2" name="1/1/1" type="E1" alias="port2"/>
+			<Node id="1_5_3" name="1/1/2" type="E1" alias="port3"/>\\
+		</Node>
+	</Node>
+
+具体建模过程需要根据实际关注点出发，避免模型过于复杂化。
+
+RackWise：中需要根据实际情况对环境中的部件进行合理的建模和录入Node模型数据，逻辑环境中根据模型才能找到符合要求的资源组建环境。
+举例：RackWise 中对负责的部件要通过Node嵌套的模型进行数据录入，并且要根据模型创建好Node之间连接关系的数据。
+
+Relationship
+
+部件之间的连接关系，依据实际物理存在的链路建模。
+
+5.2	环境业务层建模
+这一层的建模与业务视角有密切关系。站在测试人员或使用环境（本文描述的环境是只产品或解决方案的测试环境）的视角看，除了基础设施，他更关注基础设施之上运行的业务（业务可以理解是一个应用系统，一个进程单元等物理上不可见的）。
+
+这一层的建模通基础设施层一样，要对各种各样的业务进行分类定义、业务直接的关系分类定义，业务、业务直接的关系进行建模。
+
+NodeType&Node:
+需要重点考虑的是：对于一个业务系统若其与业务系是一一对于的（CT类设备）模型和基础设施保持一致，可以在基础设施基础之上增加业务系统的属性。
+                  若一个业务系统是运行与多个设备之上，且业务系统有不可能在进行拆分到多个设备上表达的，那么就需要进行独立建模，如定义新的NodeType 和 创建独立的Node。业务和基础设施之间的关系通过Relationship表达。
+
+RelationshipType&Relationship:
+业务层也需要对业务之间的关系进行分类，例如联通关系、部署关系（业务运行物理设备上这类关系的描述）等。
+
+ProvisionPlan:
+业务层还需要对业务部署建模，基础设施层环境的搭建多指基础网络的配置和联通，业务成的部署多只业务版本的部署，业务的初始化配置等。
+业务部署一般对部署的顺序比较敏感。默认部署都是并行执行，若有依赖关系、可以同定义业务之间的部署于关系决定（参照TOSCA）
+
+
+5.3	逻辑环境
+统一以上描述，我们对环境基础设施层、业务层分别做好建模那么如何基于建模描绘一个环境（确切的说是描述一个环境需求）？
+
+这就是逻辑环境的定义：
+
+假设按照上述我们已经定义好了NoteType和RelationshipType, 且已经明白每种类型表达的含义，那么现在我们就可以基于此对环境要进行描述即逻辑环境的设计，例如我们有这样一个XML描述：
+<EnvironmentTemplate>
+	<Topology>
+		<Node type="Apply" alias="a1"/>
+		<Node type="Apply" alias="a2"/>
+		<Scope inscope="vlanid" alias="s1" expression="=?"> 
+			<Node type="NE40E" alias="ne1">
+				<Property name="ip" expression="in ()"/>待细化
+				<Node type="E1" alias="ne1.port1"/>
+			</Node>
+			<Node type="NE40E" alias="ne2">
+				<Property name="ip" expression="<>?"/>
+				<Node type="E1" alias="ne2.port1"/>
+			</Node>
+		</Scope>
+		<Relationships> source="ne1.port1" target="ne2.port"
+			<Relationship alias="l1" type="LogicLink">
+				<Source refName="ne1.port1"/>
+				<Target refName=" ne2.port1">
+			</Relationship>
+			<Relationship alias="l2" type="DeployOn" >
+				<Source refName=" a1"/>
+				<Target refName=" ne1">
+			</Relationship>
+		</Relationships>
+	</Topology>
+	<Constraints>
+		<Constraint expression="ne1.ip not"/> 
+	</Constraints>
+	<ProvisionPlan reference="planTemplateUrl"></ProvisionPlan>
+	<LogicEnvironment></LogicEnvironment>
+</EnvironmentTemplate>
+
+说明：
+LogicEnvironment：逻辑环境节点，逻辑环境可以嵌套。
+Scope：为了方便描述某一个层面/范围统一要求；例如要求其中几个设备必须在同一个VLAN下，那么就可以增加Scope节点，并定义好统一要求的属性（这个属性必须是Scope下所有节点都具备的属性），这样就可以实现某个层面的约束表达。
+Expressio：可以用来存放一个表达式，用于对属性约束，约束条件可以是： =?  <?  >?  <>?  in（?）  not in（?）same
+Relationship:描述环境Node 之间的关系。
+Constraints：描述约束，前面Expressio可以满足要求, 考虑取消此处的定义
+ProvisionPlan: 环境部署策略，定义Node的部署过程， Node的串并行或依赖关系根据Relationship决定，有部署依赖关系的Node 要根据依赖关系进行部署顺序的安排。
+
+
+5.4	基于建模动态映射
+逻辑环境、物理需要基于相同的建模才能确保映射的准确性。若要实现环境的动态映射和动态组建
+首先是要对NodeType RelationshipType Ingerface Node Relateship的模型明确好。
+
+其次按照建模将数据录入到系统中（如实验室管理员需要将实验室环境按照建模完善数据并录入到RackWise系统中，如录入实验室中交互设备、路由设备、终端手机、设备链路、业务和设备的关系到系统中）
+
+然后按照测试要求根据模型描述对环境的要求，比如需要什么样的设备、多少个、设备有哪些具体要求，设备和设备直接需要怎样链接、业务、设备的部署策略。
+
+最后工具可以根据逻辑组网中的要求在实验室资源中搜索（映射）找到符合要求的设备-->完成基础网络的搭建（如需要）--完成部署任务的创建 – >部署的执行由Interface的实现模块负责。
+
+5.5	环境切换
+通过上一章节，环境动态搭建好后，测试执行结束，下一批用例需要的组网不用，那么系统根据逻辑组网进行对比以及映射，重新确定环境需要的资源，并根据之前的部署和当前要求，计算出需要搭建的任务 –发送到Interface实现模块实现，最终完成组网的切换动作。
+
+< LogicEnvironment >
+	<Topology>
+		<Node type="Apply" alias="a1"/>
+		<Node type="Apply" alias="a2"/>
+		<Scope inscope="vlanid" alias="s1" expression="=?"> 
+			<Node type="NE40E" alias="ne1">
+				<Property name="ip" expression="in ()"/>待细化
+				<Node type="E1" alias="ne1.port1"/>
+			</Node>
+			<Node type="NE40E" alias="ne2">
+				<Property name="ip" expression="<>?"/>
+				<Node type="E1" alias="ne2.port1"/>
+			</Node>
+		</Scope>
+		<Relationships> source="ne1.port1" target="ne2.port"
+			<Relationship alias="l1" type="LogicLink">
+				<Source refName="ne1.port1"/>
+				<Target refName=" ne2.port1">
+			</Relationship>
+			<Relationship alias="l2" type="DeployOn" >
+				<Source refName=" a1"/>
+				<Target refName=" ne1">
+			</Relationship>
+		</Relationships>
+	</Topology>
+	<Constraints>
+		<Constraint expression="ne1.ip not"/> 
+	</Constraints>
+	<ProvisionPlan reference="planTemplateUrl"></ProvisionPlan>
+	< LogicEnvironment ></LogicEnvironment>
+</ LogicEnvironment >
+
+
+6	参考
