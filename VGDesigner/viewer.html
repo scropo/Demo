@@ -7,9 +7,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
 <body class="geEditor">
-	<link rel="stylesheet" type="text/css" href="styles/grapheditor.css">
-	<link rel="stylesheet" type="text/css" href="js/codemirror/codemirror.css">
 	<link rel="stylesheet" href="js/treeview/bootstrap.min.css" >
+	<link rel="stylesheet" href="styles/grapheditor.css">
+	<link rel="stylesheet" href="js/codemirror/codemirror.css">
 
 	<script type="text/javascript">
 		// Parses URL parameters. Supported parameters are:
@@ -94,6 +94,62 @@
 //						this.actions.get('export').setEnabled(enabled);
 //					}));
 //				}
+				var editor = this.editor;
+				var xmlvalue = `<mxGraphModel dx="1046" dy="633" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="#ffffff">
+									<root>
+										<mxCell id="0"/>
+										<mxCell id="1" parent="0"/>
+										<mxCell id="8" value="" style="group" vertex="1" connectable="0" parent="1">
+										<mxGeometry x="280" y="230" width="265" height="80" as="geometry"/>
+										</mxCell>
+										<mxCell id="3" value="" style="image;html=1;labelBackgroundColor=#ffffff;image=stencils/clipart/Cabinet01_128x128.png;" vertex="1" parent="8">
+										<mxGeometry width="80" height="80" as="geometry"/>
+										</mxCell>
+										<mxCell id="6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jettySize=auto;orthogonalLoop=1;" edge="1" parent="8" source="4">
+										<mxGeometry relative="1" as="geometry">
+											<mxPoint x="80" y="70" as="targetPoint"/>
+											<Array as="points">
+											<mxPoint x="120" y="50"/>
+											<mxPoint x="120" y="70"/>
+											<mxPoint x="80" y="70"/>
+											</Array>
+										</mxGeometry>
+										</mxCell>
+										<mxCell id="4" value="" style="image;html=1;labelBackgroundColor=#ffffff;image=stencils/clipart/Two_Layer_Switch01_128x128.png;" vertex="1" parent="8">
+										<mxGeometry x="185" width="80" height="80" as="geometry"/>
+										</mxCell>
+										<mxCell id="7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=0.035;entryY=0.41;entryPerimeter=0;jettySize=auto;orthogonalLoop=1;" edge="1" parent="8" source="3" target="4">
+										<mxGeometry relative="1" as="geometry">
+											<Array as="points">
+											<mxPoint x="120" y="10"/>
+											<mxPoint x="120" y="33"/>
+											</Array>
+										</mxGeometry>
+										</mxCell>
+									</root>
+								</mxGraphModel>`;
+				window.openFile = new OpenFile(function()
+				{
+					window.openFile = null;
+				});
+				window.openFile.setConsumer(mxUtils.bind(this, function(xml, filename)
+				{
+					try
+					{
+						var doc = mxUtils.parseXml(xml);
+						var model = new mxGraphModel();
+						var codec = new mxCodec(doc);
+						codec.decode(doc.documentElement, model);
+						
+						var children = model.getChildren(model.getChildAt(model.getRoot(), 0));
+						editor.graph.setSelectionCells(editor.graph.importCells(children));
+					}
+					catch (e)
+					{
+						mxUtils.alert(mxResources.get('invalidOrMissingFile') + ': ' + e.message);
+					}
+				}));
+				window.parent.openFile.setData(xmlvalue, 'filename');
 			};
 
 			// Adds required resources (disables loading of fallback properties, this can only

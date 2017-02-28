@@ -75,7 +75,7 @@ AttriPanel.prototype.refresh = function(){
     div.style.margin = '10px';
     div.style.border = '1px solid #ddd';
     div.style.borderRadius = '5px';
-    this.container.appendChild(div)
+    this.container.appendChild(div);
 
     var headerDiv = this.createHeader();
     div.appendChild(headerDiv);
@@ -91,6 +91,7 @@ AttriPanel.prototype.refresh = function(){
     var specialDiv = this.createPanel();
     var specialTitle = this.createTitle('特有属性');
     var specialTable = this.addSpecial();
+    specialTable.style.display = 'none';
     specialDiv.appendChild(specialTitle);
     specialDiv.appendChild(specialTable);
     div.appendChild(specialDiv);
@@ -99,6 +100,7 @@ AttriPanel.prototype.refresh = function(){
     var customDiv = this.createPanel();
     var customTitle = this.createTitle('自定义属性');
     var customTable = this.addCustom();
+    customTable.style.display = 'none';
     customDiv.appendChild(customTitle);
     customDiv.appendChild(customTable);
     div.appendChild(customDiv);
@@ -130,6 +132,7 @@ AttriPanel.prototype.createHeader = function(){
 	label.style.overflow = 'hidden';
 	label.style.display = 'inline-block';
 	label.style.width = '100%';
+    label.style.position = 'relative';
     mxUtils.write(label, mxResources.get('attribute'));
     // Adds button to hide the format panel since
     // people don't seem to find the toolbar button
@@ -141,6 +144,9 @@ AttriPanel.prototype.createHeader = function(){
     img.style.marginTop = '4px';
     img.style.cursor = 'pointer';
     img.style.opacity = 0.8;
+    img.style.position = 'absolute';
+    img.style.top = '1px';
+    img.style.right = '0';
     label.appendChild(img);
 
     mxEvent.addListener(img, 'click', function () {
@@ -174,6 +180,7 @@ AttriPanel.prototype.createTitle = function(title){
     div.style.backgroundColor = 'rgba(216,233,242,.5)';
     div.style.borderBottom = '1px solid rgb(221, 221, 221)';
     div.style.cursor = 'pointer';
+    div.style.position = 'relative';
 	mxUtils.write(div, title);
 
     var img = document.createElement('img');
@@ -181,6 +188,9 @@ AttriPanel.prototype.createTitle = function(title){
     img.setAttribute('src', Dialog.prototype.downImage);
     img.style.float = 'right';
     img.style.marginTop = '5px';
+    img.style.position = 'absolute';
+    img.style.top = '10px';
+    img.style.right = '20px';
     div.appendChild(img);
 	
 	return div;
