@@ -1,0 +1,17 @@
+{
+    "name": "CE100",
+    "category": "Server",
+    "type": "CCU",
+    "properties": [
+        {
+            "attribute": "ip",
+            "value": "1.1.1.1",
+            "description": "test"
+        },
+        {
+            "attribute": "system",
+            "value": "linux",
+            "description": "test"
+        }
+    ]
+}
