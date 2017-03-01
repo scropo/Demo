@@ -2,8 +2,8 @@
   "_v": 0,
   "pools": [
     {
-      "dynamicElements": {
-        "operands": [
+      "dynamicElements": {                      //动态参数
+        "operands": [                           //条件集合，逻辑符合集合，可以嵌套
           {
             "attribute": "type",
             "type": "singleCondition",
@@ -13,10 +13,10 @@
           {
             "operands": [
               {
-                "attribute": "location",
-                "type": "singleCondition",
-                "value": "L2-A06",
-                "operator": "=="
+                "attribute": "location",        //查询属性
+                "type": "singleCondition",      //单个条件，具体查询条件，实际查询的就是这个
+                "value": "L2-A06",              //查询的值
+                "operator": "=="                //查询操作 小于 大于 等于 <>=适合数字 ==适合字符串
               },
               {
                 "attribute": "location",
@@ -28,10 +28,10 @@
             "type": "or"
           }
         ],
-        "type": "and"
+        "type": "and"                           //逻辑符 not or and
       },
       "elements": [],
-      "alias": "2uv3"
+      "alias": "2uv3"                           //网元别名
     },
     {
       "dynamicElements": {
