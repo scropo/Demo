@@ -16,7 +16,7 @@
                 "attribute": "location",        //查询属性
                 "type": "singleCondition",      //单个条件，具体查询条件，实际查询的就是这个
                 "value": "L2-A06",              //查询的值
-                "operator": "=="                //查询操作 小于 大于 等于 <>=适合数字 ==适合字符串
+                "operator": "=="                //查询操作（小于、大于、等于） <>=适合数字 ==适合字符串
               },
               {
                 "attribute": "location",
