@@ -11,3 +11,5 @@ Topo图形化方案:
 2.创建,保存时,把产品线ID发送给HP,HP调用LCM创建接口保存(LCM把json数据生成xml上传到FTP)
 3.编辑,LCM从FTP读取文件生成为json数据发送给HP,HP显示模型详情,保存时,再把产品线ID发送给HP,HP调用LCM更新接口保存(LCM再把json数据生成文件更新到FTP)
 4.图形化页面要支持有json格式数据的查看
+AKIAIMSWCMH  ZJHQ
+AHJkRVeBMgnFeqxIxBlx+EoUNSITwuyUIb50HDGz
