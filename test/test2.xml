@@ -36,3 +36,5 @@ conn Tunnel2
 	dpddelay=10
 	dpdtimeout=30
 	dpdaction=restart_by_peer
+18.235.54.122 34.231.226.252: PSK "7ZjxiDq7J6MhN5NVoDyiWV0rEsjySEil"
+18.235.54.122 52.201.58.88: PSK "ydLMVdgs2JMIEr_u6vx0Um0NEsy.iU6y"
